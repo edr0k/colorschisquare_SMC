@@ -137,10 +137,10 @@ def full_fit(table1, clusters1, l1, bands1, bands_ref1, pesos1,
 
     table_age = np.array(table1[:, 1])
     table_Z = np.array(table1[:, 0])
-    age_delta = (1.23 * np.log10(chi_age[1]) - 11.2)
-    # age_delta = (0.857*np.log10(chi_age[1]) - 7.75) #equação de reta da regressão linear, em log(anos)
-    # age_delta = (0.234625140007949*np.log10(chi_age[1]) -1.88273625272489)
-    # chamar de delta e fazer uma reta para idades entre 9-10
+
+    age_delta = 0
+    # age_delta = (0.346*np.log10(chi_age[1]) -2.87) #regressão full
+    # age_delta = (0.904*np.log10(chi_age[1]) -8.38) #regressão linear entre 9 e 10
     age_r = np.log10(chi_age[1]) + age_delta
     age_aprox_L = np.argmin(abs(np.log10(table1[:, 1]) - age_r))
     age_aprox = np.log10(table1[age_aprox_L, 1])

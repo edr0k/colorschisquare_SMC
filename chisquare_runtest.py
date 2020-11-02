@@ -3,19 +3,20 @@ import matplotlib.pyplot as plt
 import numpy as np
 from astropy.stats import biweight_scale, biweight_location
 from scipy import stats
-from scipy.stats import gaussian_kde
 from tabulate import tabulate
 
 import chisquare_v4 as cs
 
 # Calculando os parâmetros
-pasta = 'all'  # nome da pasta de resultados all/globular/open/cl-assoc/hl
+pasta = 'all-noreg'  # nome da pasta de resultados all/globular/open/cl-assoc/hl
+# pasta = 'all-fullreg'
+# pasta = 'all_reg9-10'
 Nsint = 2000
 Ns = 3
 nomes = np.loadtxt('results/photometry-' + pasta + '_cat.txt', usecols=[0], dtype=str)
 fields = np.loadtxt('results/photometry-' + pasta + '_cat.txt', usecols=[1], dtype=str)
 literature_param = np.loadtxt('results/parameter-cat.txt', usecols=(5, 3, 7))
-literature_name = np.loadtxt('results/parameter-cat.txt', usecols=(0), dtype=str)
+literature_name = np.loadtxt('results/parameter-cat.txt', usecols=0, dtype=str)
 print(pasta)
 print('Object field [Fe/H](Lit,Mode,Median,-,+) log(Age)(Lit,Mode,Median,-,+)')
 for i in range(0, len(nomes)):
@@ -92,76 +93,43 @@ for i in range(0, len(nomes)):
                        np.percentile(sint_cluster_param[:, 1], 84, interpolation='nearest'),
                        float(stats.mode(sint_cluster_param[:, 1])[0])]
     # print(Z_percentiles, age_percentiles)
-    print("{} {} ({:.2f} {:.2f} {:.2f} {:.2f} {:.2f}) ({:.2f} {:.2f} {:.2f} {:.2f} {:.2f})".format(nomes[i], fields[i],
-                                                                                                   literature_param[
-                                                                                                       cluster_locator, 0],
-                                                                                                   Z_percentiles[3],
-                                                                                                   Z_percentiles[0],
-                                                                                                   Z_percentiles[1],
-                                                                                                   Z_percentiles[2],
-                                                                                                   literature_param[
-                                                                                                       cluster_locator, 1],
-                                                                                                   age_percentiles[3],
-                                                                                                   age_percentiles[0],
-                                                                                                   age_percentiles[1],
-                                                                                                   age_percentiles[2]))
+    print("{} {} ({:.2f} {:.2f} {:.2f} {:.2f} {:.2f}) ({:.2f} {:.2f} {:.2f} {:.2f} {:.2f})"
+          .format(nomes[i], fields[i],
+                  literature_param[cluster_locator, 0], Z_percentiles[3], Z_percentiles[0], Z_percentiles[1],
+                  Z_percentiles[2],
+                  literature_param[cluster_locator, 1], age_percentiles[3], age_percentiles[0], age_percentiles[1],
+                  age_percentiles[2]))
 
     if i == 0:
         with open('results/' + pasta + '/clusters_output.txt', 'w') as f:
             f.write(
-                '#Object field Lit_[Fe/H] Mode_[Fe/H] Mean_[Fe/H] -_[Fe/H] +_[Fe/H] Lit_log(Age) Mode_log(Age) Median_log(Age) -_log(Age) +_log(Age) \n')
-            f.write("{} {} {:.2f} {:.2f} {:.2f} {:.2f} {:.2f} {:.2f} {:.2f} {:.2f} {:.2f} {:.2f}\n".format(nomes[i],
-                                                                                                           fields[i],
-                                                                                                           literature_param[
-                                                                                                               cluster_locator, 0],
-                                                                                                           Z_percentiles[
-                                                                                                               3],
-                                                                                                           Z_percentiles[
-                                                                                                               0],
-                                                                                                           Z_percentiles[
-                                                                                                               1],
-                                                                                                           Z_percentiles[
-                                                                                                               2],
-                                                                                                           literature_param[
-                                                                                                               cluster_locator, 1],
-                                                                                                           age_percentiles[
-                                                                                                               3],
-                                                                                                           age_percentiles[
-                                                                                                               0],
-                                                                                                           age_percentiles[
-                                                                                                               1],
-                                                                                                           age_percentiles[
-                                                                                                               2]))
+                '#Object field Lit_[Fe/H] Mode_[Fe/H] Mean_[Fe/H] 16_[Fe/H] 84_[Fe/H] '
+                '              Lit_log(Age) Mode_log(Age) Median_log(Age) 16_log(Age) 84_log(Age) \n')
+            f.write("{} {} {:.2f} {:.2f} {:.2f} {:.2f} {:.2f} {:.2f} {:.2f} {:.2f} {:.2f} {:.2f}\n"
+                    .format(nomes[i], fields[i],
+                            literature_param[cluster_locator, 0], Z_percentiles[3], Z_percentiles[0], Z_percentiles[1],
+                            Z_percentiles[2],
+                            literature_param[cluster_locator, 1], age_percentiles[3], age_percentiles[0],
+                            age_percentiles[1], age_percentiles[2]))
             # f.write('{} {:.2f} {:.2f} {:.2f} {:.4f} {:.2f}\n'.format(nomes[i], chi_Z[0], chi_Z[1], chi_Z[2],
             # np.abs(chi_Z[0] - literature[i, 0]),
             # np.abs(chi_Z[1] - literature[i, 0])))
     else:
         with open('results/' + pasta + '/clusters_output.txt', 'a') as f:
-            f.write("{} {} {:.2f} {:.2f} {:.2f} {:.2f} {:.2f} {:.2f} {:.2f} {:.2f} {:.2f} {:.2f}\n".format(nomes[i],
-                                                                                                           fields[i],
-                                                                                                           literature_param[
-                                                                                                               cluster_locator, 0],
-                                                                                                           Z_percentiles[
-                                                                                                               3],
-                                                                                                           Z_percentiles[
-                                                                                                               0],
-                                                                                                           Z_percentiles[
-                                                                                                               1],
-                                                                                                           Z_percentiles[
-                                                                                                               2],
-                                                                                                           literature_param[
-                                                                                                               cluster_locator, 1],
-                                                                                                           age_percentiles[
-                                                                                                               3],
-                                                                                                           age_percentiles[
-                                                                                                               0],
-                                                                                                           age_percentiles[
-                                                                                                               1],
-                                                                                                           age_percentiles[
-                                                                                                               2]))
+            f.write("{} {} {:.2f} {:.2f} {:.2f} {:.2f} {:.2f} {:.2f} {:.2f} {:.2f} {:.2f} {:.2f}\n"
+                    .format(nomes[i], fields[i],
+                            literature_param[cluster_locator, 0], Z_percentiles[3], Z_percentiles[0], Z_percentiles[1],
+                            Z_percentiles[2],
+                            literature_param[cluster_locator, 1], age_percentiles[3], age_percentiles[0],
+                            age_percentiles[1], age_percentiles[2]))
             # f.write('{} {:.2f} {:.2f} {:.2f} {:.4f} {:.2f}\n'.format(nomes[i], chi_Z[0], chi_Z[1], chi_Z[2],
             #                                                        np.abs(chi_Z[0] - literature[i, 0]),
             #                                                        np.abs(chi_Z[1] - literature[i, 1])))
+
+    #######################################################################################################################
+    #######################################################################################################################
+    #######################################################################################################################
+    #######################################################################################################################
 
     # plt.subplots(3,3, constrained_layout=True)#(figsize=(12, 12))
     # plt.suptitle(fields[i]+'_'+nomes[i])
@@ -175,19 +143,20 @@ for i in range(0, len(nomes)):
     # plt.subplot2grid((3, 3), (1, 2), rowspan=2)
     # plt.subplot(221)
     a = fig.add_subplot(gs[1, 1])
-    n, bins_Z, patches = plt.hist(sint_cluster_param[:, 0], orientation='horizontal')
+    n, bins_Z, patches = plt.hist(sint_cluster_param[:, 0], orientation='horizontal', color='khaki')
     # bins=np.arange((literature_param[cluster_locator,0]-1),
     #               (literature_param[cluster_locator,0]+1),0.1),
     # orientation='horizontal')
     # print(n, bins_Z)
     a.axes.get_yaxis().set_visible(False)
-    plt.hlines(literature_param[cluster_locator, 0], 0, np.max(n), label='literature', color='black', zorder=5)
-    plt.hlines(Z_percentiles[3], 0, np.max(n) / 3, label='mode', color='purple', zorder=3)
-    plt.hlines(Z_percentiles[0], 0, np.max(n) / 2, label='median', color='orange', zorder=2)
-    plt.ylim(np.min(bins_Z) - 0.1, np.max(bins_Z) + 0.1)
-    plt.hlines(mmm_Z, 0, np.max(n) / 1, label='mmm', color='blue', zorder=4)
-    plt.hlines(Z_percentiles[1], 0, np.max(n) / 4, label='16%', color='red')
-    plt.hlines(Z_percentiles[2], 0, np.max(n) / 4, label='84%', color='green')
+    plt.hlines(literature_param[cluster_locator, 0], 0, np.max(n), label='literature', color='green', zorder=5)
+    plt.hlines(Z_percentiles[3], 0, np.max(n), label='mode', color='purple', zorder=3)
+    plt.hlines(Z_percentiles[0], 0, np.max(n), label='median', color='red', zorder=2)
+    # plt.ylim(np.min(bins_Z) - 0.1, np.max(bins_Z) + 0.1)
+    plt.ylim(-2.5, 1.5)
+    plt.hlines(mmm_Z, 0, np.max(n), label='mmm', color='blue', zorder=4)
+    plt.hlines(Z_percentiles[1], 0, np.max(n), label='16%', color='black', linestyles='dashed', zorder=5)
+    plt.hlines(Z_percentiles[2], 0, np.max(n), label='84%', color='black', linestyles='dashed', zorder=5)
     # plt.legend(bbox_to_anchor=(1.0,1.05), loc="upper left", frameon=False)
     # plt.ylabel('[Fe/H]',fontsize=15)
     plt.xlabel('N', fontsize=15)
@@ -196,20 +165,21 @@ for i in range(0, len(nomes)):
     # plt.subplot2grid((3, 3), (0, 0), colspan=2)
     # plt.subplot(222)
     a = fig.add_subplot(gs[0, 0])
-    n, bins_age, patches = plt.hist(sint_cluster_param[:, 1], orientation='vertical')
+    n, bins_age, patches = plt.hist(sint_cluster_param[:, 1], orientation='vertical', color='khaki')
     # bins=np.arange((literature_param[cluster_locator,1]-1),
     #                                    (literature_param[cluster_locator,1]+1),0.1),
     #                  orientation='vertical')
     # print(n,bins_age)
 
-    plt.vlines(literature_param[cluster_locator, 1], 0, np.max(n) / 1, label='literature', color='black', zorder=5)
-    plt.vlines(age_percentiles[3], 0, np.max(n) / 3, label='mode', color='purple', zorder=3)
-    plt.vlines(age_percentiles[0], 0, np.max(n) / 2, label='median', color='orange', zorder=2)
+    plt.vlines(literature_param[cluster_locator, 1], 0, np.max(n), label='literature', color='green', zorder=5)
+    plt.vlines(age_percentiles[3], 0, np.max(n), label='mode', color='purple', zorder=3)
+    plt.vlines(age_percentiles[0], 0, np.max(n), label='median', color='red', zorder=2)
     a.axes.get_xaxis().set_visible(False)
-    plt.xlim(np.min(bins_age) - 0.05, np.max(bins_age) + 0.05)
-    plt.vlines(mmm_age, 0, np.max(n) / 1, label='mmm', color='blue', zorder=4)
-    plt.vlines(age_percentiles[1], 0, np.max(n) / 4, label='16%', color='red')
-    plt.vlines(age_percentiles[2], 0, np.max(n) / 4, label='84%', color='green')
+    # plt.xlim(np.min(bins_age) - 0.05, np.max(bins_age) + 0.05)
+    plt.xlim(6.4, 10.2)
+    plt.vlines(mmm_age, 0, np.max(n), label='mmm', color='blue', zorder=4)
+    plt.vlines(age_percentiles[1], 0, np.max(n), label='16%', color='black', linestyles='dashed', zorder=5)
+    plt.vlines(age_percentiles[2], 0, np.max(n), label='84%', color='black', linestyles='dashed', zorder=5)
     plt.legend(bbox_to_anchor=(1.0, 1.05), loc="upper left", frameon=False)
     # plt.xlabel('log(Age)', fontsize=15)
     plt.ylabel('N', fontsize=15)
@@ -218,16 +188,18 @@ for i in range(0, len(nomes)):
     fig.add_subplot(gs[1, 0])
     plt.ylabel('[Fe/H]', fontsize=15)
     plt.xlabel('log(Age)', fontsize=15)
-    plt.ylim(np.min(bins_Z) - 0.1, np.max(bins_Z) + 0.1)
-    plt.xlim(np.min(bins_age) - 0.05, np.max(bins_age) + 0.05)
+    # plt.ylim(np.min(bins_Z) - 0.1, np.max(bins_Z) + 0.1)
+    # plt.xlim(np.min(bins_age) - 0.05, np.max(bins_age) + 0.05)
+    plt.xlim(6.4, 10.2)
+    plt.ylim(-2.5, 1.5)
     d = np.vstack([sint_cluster_param[:, 1], sint_cluster_param[:, 0]])
-    density = gaussian_kde(d)(d)
+    density = stats.gaussian_kde(d)(d)
     sc = plt.scatter(sint_cluster_param[:, 1], sint_cluster_param[:, 0], marker='.', c=density, s=100, edgecolor='',
-                     zorder=4)
-    # plt.scatter(mmm_age, mmm_Z, marker='o', color='blue')
-    plt.hlines(mmm_Z, np.min(bins_age) - 0.05, np.max(bins_age) + 0.05, color='blue', zorder=3)
-    plt.vlines(mmm_age, np.min(bins_Z) - 0.1, np.max(bins_Z) + 0.1, color='blue', zorder=3)
-    plt.scatter(literature_param[cluster_locator, 1], literature_param[cluster_locator, 0], marker='x', color='black',
+                     cmap='inferno_r', zorder=4)
+    plt.scatter(mmm_age, mmm_Z, marker='o', color='blue', zorder=5)
+    # plt.hlines(mmm_Z, np.min(bins_age) - 0.05, np.max(bins_age) + 0.05, color='blue', zorder=3)
+    # plt.vlines(mmm_age, np.min(bins_Z) - 0.1, np.max(bins_Z) + 0.1, color='blue', zorder=3)
+    plt.scatter(literature_param[cluster_locator, 1], literature_param[cluster_locator, 0], marker='x', color='green',
                 zorder=5)
 
     # fig.add_subplot(gs[:, 2])
@@ -242,6 +214,12 @@ for i in range(0, len(nomes)):
                 dpi=300)  # ,bbox_inches='tight')
     plt.close()
     # plt.show()
+
+#######################################################################################################################
+#######################################################################################################################
+#######################################################################################################################
+#######################################################################################################################
+
 
 results_strings = np.loadtxt('results/' + pasta + '/clusters_output.txt', usecols=[0, 1], dtype=str)
 results_floats = np.loadtxt('results/' + pasta + '/clusters_output.txt', usecols=[2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
@@ -333,10 +311,12 @@ for i in range(len(results_strings)):
     # if(results_floats[i,2]!=results_floats[i,3]):
     #    ax0.vlines(results_strings[i,0],results_floats[i,2],results_floats[i,3])
 
-ax0.hlines(location[0] + scale[0], np.min(results_floats[:, 0]), np.max(results_floats[:, 0]), label='biweight scale')
+ax0.hlines(location[0] + scale[0], np.min(results_floats[:, 0]), np.max(results_floats[:, 0]),
+           label='biweight scale=' + str(scale[0]))
 ax0.hlines(location[0] - scale[0], np.min(results_floats[:, 0]), np.max(results_floats[:, 0]))
 ax0.hlines(location[0], np.min(results_floats[:, 0]), np.max(results_floats[:, 0]), color='blue',
-           label='biweight location')
+           label='biweight location=' + str(location[0]))
+plt.ylim(-1.5, 2.5)
 plt.legend()
 plt.tight_layout()
 plt.savefig('results/' + pasta + '/clusters_Z-error.png', dpi=300, bbox_inches='tight')
@@ -356,12 +336,13 @@ for i in range(len(results_strings)):
     # if(results_floats[i,2]!=results_floats[i,3]):
     #    ax1.vlines(results_strings[i,0],results_floats[i,2],results_floats[i,3])
 
-ax1.hlines(location[1] + scale[1], np.min(results_floats[:, 5]), np.max(results_floats[:, 5]), label='biweight scale')
+ax1.hlines(location[1] + scale[1], np.min(results_floats[:, 5]), np.max(results_floats[:, 5]),
+           label='biweight scale=' + str(scale[1]))
 ax1.hlines(location[1] - scale[1], np.min(results_floats[:, 5]), np.max(results_floats[:, 5]))
 ax1.hlines(location[1], np.min(results_floats[:, 5]), np.max(results_floats[:, 5]), color='blue',
-           label='biweight location')
+           label='biweight location=' + str(location[1]))
 # plt.xlim(9,10.13)
-# plt.ylim(-1,1)
+plt.ylim(-1.5, 2.5)
 plt.legend()
 plt.tight_layout()
 plt.savefig('results/' + pasta + '/clusters_age-error.png', dpi=300, bbox_inches='tight')
